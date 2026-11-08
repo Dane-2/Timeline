@@ -11,3 +11,4 @@ npm install
 cp .env.example .env.local   # fill in Supabase URL + anon key
 npm run dev
 ```
+# Timeline
