@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Core palette */
+  --color-blush: #f6b8ce;
+  --color-blush-deep: #e98fb0;
+  --color-petal: #ffdce8;
+  --color-cream: #fff5e9;
+  --color-paper: #ffffff;
+  --color-snow: #fffcfd;
+  --color-lavender: #b59ad8;
+  --color-lilac: #e6dcf5;
+  --color-mauve: #8c6178;
+  --color-ink: #3a3034;
+  --color-ink-soft: #6b5c63;
+
+  /* Supporting neutrals & accents */
+  --color-kraft: #e8d6c0;
+  --color-kraft-deep: #c9ab8a;
+  --color-butter: #fff0b8;
+  --color-sage: #c7d6b4;
+  --color-sky: #d3e4f3;
+  --color-berry: #c2456e;
+  --color-peach: #ffd9c2;
+  --color-khaki: #dcd6bd;
+
+  /* Seasonal accents */
+  --color-pine: #4f7a5b;
+  --color-cranberry: #b8323f;
+  --color-pumpkin: #d98845;
+  --color-maple: #a8552c;
+
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-hand: 'Caveat', 'Bradley Hand', cursive;
+  --font-sans: 'DM Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-paper: 0 1px 1px rgb(58 48 52 / 0.06), 0 6px 14px -6px rgb(58 48 52 / 0.18);
+  --shadow-lifted: 0 2px 3px rgb(58 48 52 / 0.08), 0 18px 30px -12px rgb(58 48 52 / 0.28);
+
+  --ease-paper: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-snow text-ink font-sans antialiased;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    /* Dotted journal paper + a faint grain */
+    background-image:
+      radial-gradient(rgb(233 143 176 / 0.12) 1px, transparent 1.2px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .38 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 26px 26px, 160px 160px;
+  }
+
+  :focus-visible {
+    outline: 2.5px dashed var(--color-mauve);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-petal);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scrapbook materials
+   --------------------------------------------------------------------------- */
+@layer components {
+  .paper {
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .4 0 0 0 .025 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .paper-lined {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      rgb(181 154 216 / 0.35) 27px,
+      rgb(181 154 216 / 0.35) 28px
+    );
+  }
+
+  /* Irregular torn edge along the bottom of an element */
+  .torn-bottom {
+    --tear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M0 0H200V6l-6 4-7-5-5 6-8-4-6 3-9-5-4 5-8-3-7 4-6-5-9 6-5-4-8 3-6-4-7 5-9-4-5 3-7-5-6 6-8-4-6 3-9-5-5 4-7-3-6 5-8-4-6 4-7-5-9 5-4-3V0Z'/%3E%3C/svg%3E");
+    -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, var(--tear) bottom / 100% 12px no-repeat;
+    mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, var(--tear) bottom / 100% 12px no-repeat;
+  }
+
+  .torn-top {
+    --tear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M0 12H200V6l-5-4-8 5-6-6-7 4-9-3-5 5-7-4-8 3-6-5-7 6-9-4-4 3-8-5-6 4-7-3-8 5-6-6-7 4-5-3-9 5-6-4-7 3-8-5-5 4-7-3-9 5-6-5-5 3V12Z'/%3E%3C/svg%3E");
+    -webkit-mask: var(--tear) top / 100% 12px no-repeat, linear-gradient(#000 0 0) bottom / 100% calc(100% - 11px) no-repeat;
+    mask: var(--tear) top / 100% 12px no-repeat, linear-gradient(#000 0 0) bottom / 100% calc(100% - 11px) no-repeat;
+  }
+
+  .hand {
+    font-family: var(--font-hand);
+    line-height: 1.15;
+  }
+
+  .stamp {
+    @apply font-sans text-[0.68rem] font-semibold tracking-[0.18em] uppercase;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Gentle ambient motion (CSS-only so it costs nothing)
+   --------------------------------------------------------------------------- */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-6px) rotate(var(--r, 0deg)); }
+}
+
+@keyframes cloud-drift {
+  0%, 100% { transform: translateX(0) scaleX(var(--flip, 1)); }
+  50% { transform: translateX(16px) scaleX(var(--flip, 1)); }
+}
+
+@keyframes cat-tail {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes cat-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.float-slow { animation: float-y 6s ease-in-out infinite; }
+
+/* Respect both the OS setting and the in-site "calm mode" toggle */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html[data-calm='true'] *,
+html[data-calm='true'] *::before,
+html[data-calm='true'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}

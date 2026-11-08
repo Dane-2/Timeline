@@ -1,0 +1,135 @@
+/* Beach room — Southern California golden hour. Loaded only with the beach page.
+   Reduced-motion / calm mode freeze everything via styles/index.css. */
+
+.beach-root {
+  --sky-top: #8fd3f4;
+  --sky-mid: #ffd8b0;
+  --sky-low: #ffb38a;
+  --sun-1: #ffe39a;
+  --sun-2: #ff9a76;
+  --sun-3: #ff6f91;
+  --ocean-1: #2a9bc0;
+  --ocean-2: #1d7ea3;
+  --ocean-3: #145f80;
+  --sand: #f3dfc1;
+  --palm: #3a2b45;
+  --deep-teal: #0f4c5c;
+}
+
+.beach-script {
+  font-family: 'Pacifico', var(--font-hand);
+}
+
+/* ---- Backdrop ------------------------------------------------------------ */
+.beach-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--sky-top) 0%, #bfe3ef 22%, var(--sky-mid) 48%, var(--sky-low) 62%);
+}
+
+.beach-sun {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: min(62vw, 420px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -58%;
+  background: linear-gradient(to bottom, var(--sun-1) 10%, var(--sun-2) 55%, var(--sun-3) 90%);
+  box-shadow: 0 0 80px 20px rgb(255 190 120 / 0.45);
+  -webkit-mask-image: linear-gradient(to bottom, #000 54%, transparent 54% 58%, #000 58% 65%, transparent 65% 70%, #000 70% 78%, transparent 78% 84%, #000 84%);
+  mask-image: linear-gradient(to bottom, #000 54%, transparent 54% 58%, #000 58% 65%, transparent 65% 70%, #000 70% 78%, transparent 78% 84%, #000 84%);
+  animation: beach-sun 9s ease-in-out infinite alternate;
+}
+
+@keyframes beach-sun {
+  from { transform: translateY(0); }
+  to { transform: translateY(10px); }
+}
+
+.beach-ocean {
+  position: absolute;
+  inset: 60% 0 0 0;
+  background: linear-gradient(to bottom, var(--ocean-1), var(--ocean-3));
+}
+
+/* Sun glitter on the water */
+.beach-glitter {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  width: 34vw;
+  max-width: 260px;
+  height: 22%;
+  translate: -50% 0;
+  background: repeating-linear-gradient(to bottom, rgb(255 230 170 / 0.7) 0 2px, transparent 2px 9px);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 70%);
+  animation: beach-glitter 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes beach-glitter {
+  from { opacity: 0.55; }
+  to { opacity: 0.95; }
+}
+
+.beach-wave {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  animation: beach-wave var(--dur, 14s) linear infinite;
+}
+
+@keyframes beach-wave {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.beach-palm {
+  position: absolute;
+  bottom: -2%;
+  height: 78vh;
+  transform-origin: 50% 100%;
+  animation: beach-sway 6s ease-in-out infinite alternate;
+}
+
+@keyframes beach-sway {
+  from { transform: rotate(-1.5deg) scaleX(var(--flip, 1)); }
+  to { transform: rotate(1.5deg) scaleX(var(--flip, 1)); }
+}
+
+.beach-gull {
+  position: absolute;
+  animation: beach-gull var(--dur, 28s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes beach-gull {
+  from { transform: translateX(-15vw) translateY(0); }
+  50% { transform: translateX(50vw) translateY(-14px); }
+  to { transform: translateX(115vw) translateY(4px); }
+}
+
+/* ---- Cards ------------------------------------------------------------- */
+.beach-card {
+  background: #fffaf2;
+  box-shadow: 0 2px 3px rgb(15 76 92 / 0.08), 0 22px 40px -22px rgb(15 76 92 / 0.55);
+}
+
+.postcard-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.retro-title {
+  font-family: 'Pacifico', var(--font-hand);
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--sun-3), 4px 4px 0 var(--deep-teal), 0 0 18px rgb(0 0 0 / 0.25);
+}
+
+.surfboard {
+  border-radius: 50% / 50%;
+  box-shadow: inset 0 -6px 10px rgb(0 0 0 / 0.08), 0 14px 24px -14px rgb(15 76 92 / 0.6);
+}

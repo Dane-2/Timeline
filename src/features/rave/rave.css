@@ -1,0 +1,214 @@
+/* Rave room — loaded only with the rave page.
+   Flashes are capped at ≤3 per second and never full-white strobes
+   (photosensitivity guidance). The global reduced-motion and calm-mode
+   rules in styles/index.css freeze every animation below. */
+
+.rave-root {
+  --neon-pink: #ff2bd6;
+  --neon-cyan: #00f0ff;
+  --neon-lime: #c6ff3d;
+  --neon-violet: #8a4dff;
+  --rave-black: #06030c;
+  font-family: var(--font-sans);
+}
+
+.rave-display {
+  font-family: 'Unbounded Variable', var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ---- Text glow ---------------------------------------------------------- */
+.neon-pink {
+  color: #fff;
+  text-shadow: 0 0 4px #fff, 0 0 14px var(--neon-pink), 0 0 36px var(--neon-pink), 0 0 70px rgb(255 43 214 / 0.5);
+}
+.neon-cyan {
+  color: #fff;
+  text-shadow: 0 0 4px #fff, 0 0 14px var(--neon-cyan), 0 0 36px var(--neon-cyan);
+}
+.chroma {
+  text-shadow: -3px 0 rgb(0 240 255 / 0.85), 3px 0 rgb(255 43 214 / 0.85), 0 0 30px rgb(138 77 255 / 0.6);
+}
+
+/* ---- Backdrop ----------------------------------------------------------- */
+.rave-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 120%, #1a0630 0%, var(--rave-black) 60%);
+}
+
+.rave-blob {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.38;
+  mix-blend-mode: screen;
+  animation: rave-blob 14s ease-in-out infinite alternate;
+}
+
+@keyframes rave-blob {
+  0% { transform: translate(-10%, -6%) scale(0.9); }
+  100% { transform: translate(12%, 10%) scale(1.15); }
+}
+
+.rave-beam {
+  position: absolute;
+  top: -12%;
+  width: 3px;
+  height: 150vh;
+  transform-origin: 50% 0;
+  mix-blend-mode: screen;
+  filter: blur(0.6px);
+  opacity: 0.75;
+  animation: rave-sweep var(--dur, 6s) ease-in-out infinite alternate;
+}
+
+@keyframes rave-sweep {
+  0% { transform: rotate(calc(var(--a) - 28deg)); }
+  100% { transform: rotate(calc(var(--a) + 28deg)); }
+}
+
+.rave-grid {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -8vh;
+  height: 55vh;
+  background-image:
+    linear-gradient(rgb(255 43 214 / 0.55) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgb(0 240 255 / 0.4) 1.5px, transparent 1.5px);
+  background-size: 48px 48px;
+  transform: perspective(320px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  animation: rave-grid 0.94s linear infinite; /* two beats at 128 BPM */
+}
+
+@keyframes rave-grid {
+  from { background-position: 0 0; }
+  to { background-position: 0 48px; }
+}
+
+.rave-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+/* ---- Beat --------------------------------------------------------------- */
+.on-beat {
+  animation: rave-beat 0.469s ease-out infinite; /* 128 BPM */
+}
+
+@keyframes rave-beat {
+  0% { transform: scale(1.045); }
+  35%, 100% { transform: scale(1); }
+}
+
+.rave-flicker {
+  animation: rave-flicker 3.2s linear infinite;
+}
+
+@keyframes rave-flicker {
+  0%, 18%, 22%, 62%, 64%, 100% { opacity: 1; }
+  20%, 63% { opacity: 0.55; }
+}
+
+/* ---- Neon frame --------------------------------------------------------- */
+.neon-frame {
+  border: 2px solid var(--c, var(--neon-pink));
+  box-shadow: 0 0 10px var(--c, var(--neon-pink)), 0 0 34px -6px var(--c, var(--neon-pink)),
+    inset 0 0 14px -4px var(--c, var(--neon-pink));
+}
+
+/* ---- Wristband ---------------------------------------------------------- */
+.wristband {
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.12) 0 2px, transparent 2px 9px),
+    linear-gradient(90deg, var(--c1), var(--c2));
+  clip-path: polygon(0 0, 100% 0, 97% 50%, 100% 100%, 0 100%, 3% 50%);
+}
+
+/* Cat bobbing to the beat */
+@keyframes cat-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+/* ---- Smoke machine -------------------------------------------------------- */
+.rave-smoke {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(235 225 255 / 0.22), rgb(200 180 255 / 0.08) 55%, transparent);
+  filter: blur(28px);
+  animation: smoke-drift var(--dur, 26s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes smoke-drift {
+  0% { transform: translate(-8%, 18%) scale(0.85); opacity: 0; }
+  20% { opacity: 1; }
+  60% { opacity: 0.85; }
+  100% { transform: translate(14%, -38%) scale(1.35); opacity: 0; }
+}
+
+.rave-haze {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45vh;
+  background: linear-gradient(to top, rgb(190 170 255 / 0.18), transparent);
+  filter: blur(10px);
+}
+
+/* ---- Moving-head spotlights ------------------------------------------------ */
+.rave-cone {
+  position: absolute;
+  top: -6vh;
+  width: 34vmax;
+  height: 120vh;
+  margin-left: -17vmax;
+  transform-origin: 50% 0;
+  clip-path: polygon(48% 0, 52% 0, 100% 100%, 0 100%);
+  mix-blend-mode: screen;
+  opacity: 0.32;
+  animation: rave-sweep var(--dur, 7s) ease-in-out infinite alternate;
+}
+
+/* ---- Light wash on the beat (2.13 Hz, colored, ≤ 22% — not a strobe) ----- */
+.rave-wash {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  animation:
+    rave-wash-pulse 0.469s ease-out infinite,
+    rave-wash-color 7.5s steps(1) infinite;
+}
+
+@keyframes rave-wash-pulse {
+  0% { opacity: 0.22; }
+  60%, 100% { opacity: 0; }
+}
+
+@keyframes rave-wash-color {
+  0% { background: radial-gradient(ellipse at 50% 30%, #ff2bd6, transparent 70%); }
+  25% { background: radial-gradient(ellipse at 30% 40%, #00f0ff, transparent 70%); }
+  50% { background: radial-gradient(ellipse at 70% 35%, #8a4dff, transparent 70%); }
+  75% { background: radial-gradient(ellipse at 50% 50%, #c6ff3d, transparent 70%); }
+}
+
+.lights-off .rave-wash,
+.lights-off .rave-cone,
+.lights-off .rave-beam {
+  display: none;
+}
+
+@keyframes eq-bar {
+  from { height: 25%; }
+  to { height: 100%; }
+}
