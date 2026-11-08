@@ -18,10 +18,13 @@ export function WelcomePage() {
   const settings = useSiteSettings()
   const navigate = useNavigate()
   const location = useLocation()
-  const [showSignIn, setShowSignIn] = useState(false)
+  // `?signin` opens the sign-in card directly (how the admin logs in now that
+  // the Enter button goes straight inside).
+  const [showSignIn, setShowSignIn] = useState(() => new URLSearchParams(location.search).has('signin'))
   const from = (location.state as { from?: string } | null)?.from ?? '/home'
 
   const isMember = Boolean(session && role)
+  const canEnter = isMember || !session
 
   // After signing in from the card, go straight inside.
   useEffect(() => {
@@ -29,7 +32,7 @@ export function WelcomePage() {
   }, [showSignIn, isMember, from, navigate])
 
   function enter() {
-    if (isMember) navigate(from)
+    if (canEnter) navigate(from)
     else setShowSignIn(true)
   }
 
@@ -48,7 +51,7 @@ export function WelcomePage() {
           className="flex flex-col items-center"
         >
           <Heart className="text-blush-deep h-6 w-6" />
-          {isMember && settings.herName && <p className="hand text-mauve mt-3 text-2xl">hi, {settings.herName}</p>}
+          {canEnter && settings.herName && <p className="hand text-mauve mt-3 text-2xl">hi, {settings.herName}</p>}
           <h1 className="font-display text-ink mt-3 text-[2.5rem] leading-[1.05] font-medium tracking-tight text-balance sm:text-6xl">
             {settings.siteTitle}
           </h1>

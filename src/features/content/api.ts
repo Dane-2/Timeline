@@ -61,6 +61,9 @@ export async function getSignedUrl(path: string): Promise<string | null> {
 }
 
 export async function markOpened(contentId: string): Promise<void> {
+  // Receipts are per account; logged-out visitors don't get "new!" tracking.
+  const { data } = await supabase.auth.getSession()
+  if (!data.session) return
   await supabase.from('content_opens').upsert({ content_id: contentId }, { ignoreDuplicates: true })
 }
 

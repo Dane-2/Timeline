@@ -6,8 +6,6 @@ export interface AuthState {
   session: Session | null
   role: AppRole | null
   loading: boolean
-  /** Signed in automatically with the shared visitor account. */
-  isGuest: boolean
   signOut: () => Promise<void>
   /** Dev builds only: skip sign-in with a fake admin session. */
   devBypass?: () => void

@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom'
 
 export function DashboardPage() {
   const settings = useSiteSettings()
-  const { role, isGuest, signOut } = useAuth()
+  const { session, role, signOut } = useAuth()
   const { calm, toggle } = useCalmMode()
   const open = useAsync(() => fetchOpenContent(), [])
   const locked = useAsync(fetchLockedPreviews, [])
@@ -78,8 +78,7 @@ export function DashboardPage() {
             Admin
           </Link>
         )}
-        {/* Signing out of the shared account would just sign straight back in. */}
-        {!isGuest && (
+        {session && (
           <button onClick={signOut} className="underline-offset-4 hover:underline">
             Sign out
           </button>

@@ -1,17 +1,18 @@
 import type { ReactNode } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from './authContext'
 import { PaperLoader } from '../../components/scrapbook/PaperLoader'
 import { NotInvitedPage } from './NotInvitedPage'
 
-/** Signed in AND granted a role by the admin. */
+/**
+ * Logged-out visitors may come in (public viewing — RLS decides what they
+ * see). A signed-in account still needs a role granted by the admin.
+ */
 export function RequireMember({ children }: { children: ReactNode }) {
   const { session, role, loading } = useAuth()
-  const location = useLocation()
 
   if (loading) return <PaperLoader />
-  if (!session) return <Navigate to="/" replace state={{ from: location.pathname }} />
-  if (!role) return <NotInvitedPage />
+  if (session && !role) return <NotInvitedPage />
   return children
 }
 

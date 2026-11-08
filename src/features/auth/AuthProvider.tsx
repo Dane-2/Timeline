@@ -11,15 +11,6 @@ const DEV_BYPASS_KEY = 'little-piece-dev-bypass'
 const DEV_SESSION = { user: { id: 'dev-bypass' } } as Session
 const devBypassOn = () => import.meta.env.DEV && sessionStorage.getItem(DEV_BYPASS_KEY) === '1'
 
-// Optional shared visitor account. When both are set, anyone opening the site
-// is signed in as this account automatically — no login screen. It only has
-// the visitor role, so RLS still keeps locked letters locked and admin closed.
-// Add `?signin` to the URL to get the normal sign-in card instead (for admin).
-const GUEST_EMAIL = import.meta.env.VITE_GUEST_EMAIL as string | undefined
-const GUEST_PASSWORD = import.meta.env.VITE_GUEST_PASSWORD as string | undefined
-const guestAutoSignIn = () =>
-  Boolean(GUEST_EMAIL && GUEST_PASSWORD) && !new URLSearchParams(window.location.search).has('signin')
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [bypassed, setBypassed] = useState(devBypassOn)
   const [session, setSession] = useState<Session | null>(null)
@@ -29,15 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isSupabaseConfigured) return
 
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session && guestAutoSignIn()) {
-        // On failure we fall through to the normal sign-in card.
-        const { data: signedIn } = await supabase.auth.signInWithPassword({
-          email: GUEST_EMAIL!,
-          password: GUEST_PASSWORD!,
-        })
-        if (signedIn.session) return // onAuthStateChange takes it from here
-      }
+    supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       if (!data.session) setLoading(false)
     })
@@ -90,11 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     : undefined
 
-  const isGuest = Boolean(GUEST_EMAIL) && session?.user.email?.toLowerCase() === GUEST_EMAIL!.toLowerCase()
-
   const value = bypassed
-    ? { session: DEV_SESSION, role: 'admin' as const, loading: false, isGuest: false, signOut, devBypass }
-    : { session, role, loading, isGuest, signOut, devBypass }
+    ? { session: DEV_SESSION, role: 'admin' as const, loading: false, signOut, devBypass }
+    : { session, role, loading, signOut, devBypass }
 
   return (
     <AuthContext.Provider value={value}>

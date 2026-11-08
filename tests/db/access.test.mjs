@@ -182,12 +182,39 @@ test('a signed-in user with no role sees nothing', () =>
     assert.equal((await rows(`select 1 from storage.objects`)).length, 0)
   }))
 
-test('anonymous callers see nothing and cannot call the preview function', () =>
+// Public viewing (20261108000000): logged-out visitors see what she sees.
+test('anonymous visitors see only published, unlocked items', () =>
+  as(null, async ({ rows }) => {
+    assert.deepEqual(titles(await rows('select title from content_items')), ['EXACTLY NOW', 'OPEN LETTER'])
+    assert.equal((await rows('select 1 from content_items where id = $1', [ID.future])).length, 0)
+    assert.equal((await rows(`select 1 from content_items where status = 'draft'`)).length, 0)
+    assert.equal((await rows('select 1 from site_settings')).length, 1)
+  }))
+
+test('anonymous visitors get safe previews and only open media', () =>
+  as(null, async ({ rows }) => {
+    const previews = await rows('select * from locked_previews()')
+    assert.deepEqual(previews.map((p) => p.occasion).sort(), ['Birthday', 'Christmas'])
+    assert.ok(!previews.some((p) => p.id === ID.hiddenEgg))
+    assert.deepEqual((await rows('select storage_path from media_assets')).map((r) => r.storage_path), ['open/photo.jpg'])
+    assert.deepEqual((await rows('select name from storage.objects')).map((r) => r.name), ['open/photo.jpg'])
+    const can = async (path) => (await rows(`select can_read_media('private-media', $1) as ok`, [path]))[0].ok
+    assert.equal(await can('future/video.mp4'), false)
+    assert.equal(await can('orphan/unattached.jpg'), false)
+  }))
+
+test('anonymous visitors cannot write anything or read accounts and notes', () =>
   as(null, async ({ rows, fails }) => {
-    assert.equal((await rows('select 1 from content_items')).length, 0)
-    assert.equal((await rows('select 1 from storage.objects')).length, 0)
-    assert.equal((await rows('select 1 from site_settings')).length, 0)
-    await fails('select * from locked_previews()')
+    await fails(`insert into content_items (kind, title) values ('letter', 'hax')`)
+    assert.equal((await rows(`update content_items set unlock_at = now() - interval '1 year' where id = $1 returning 1`, [ID.future])).length, 0)
+    assert.equal((await rows('delete from content_items where id = $1 returning 1', [ID.open])).length, 0)
+    assert.equal((await rows(`update site_settings set settings = '{}'::jsonb returning 1`)).length, 0)
+    await fails(`insert into storage.objects (bucket_id, name) values ('private-media', 'evil.jpg')`)
+    await fails(`insert into media_assets (storage_path, media_type) values ('x.jpg', 'image')`)
+    await fails(`insert into visitor_notes (body) values ('hi')`)
+    await fails(`insert into content_opens (content_id) values ('${ID.open}')`)
+    assert.equal((await rows('select 1 from profiles')).length, 0)
+    assert.equal((await rows('select 1 from visitor_notes')).length, 0)
   }))
 
 // ---------------------------------------------------------------------------
